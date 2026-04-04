@@ -1,0 +1,9 @@
+{
+  "name": "stellar-price-oracle-backend",
+  "private": true,
+  "workspaces": ["shared", "aggregator", "api"],
+  "scripts": {
+    "build": "npm run build --workspaces",
+    "test": "npm run test --workspaces --if-present"
+  }
+}

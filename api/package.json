@@ -1,0 +1,5 @@
+{
+  "name": "@oracle/api",
+  "version": "0.1.0",
+  "scripts": { "build": "tsc", "dev": "ts-node src/index.ts" }
+}
