@@ -1,6 +1,11 @@
 {
-  "name": "@oracle/shared",
-  "version": "0.1.0",
-  "main": "dist/index.js",
-  "scripts": { "build": "tsc" }
+  "name": "stellar-price-oracle-shared",
+  "version": "1.0.0",
+  "main": "src/index.ts",
+  "dependencies": {
+    "pg": "^8.12.0"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.11.6"
+  }
 }
