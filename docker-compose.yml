@@ -1,0 +1,70 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-oracle}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-oracle}
+      POSTGRES_DB: ${POSTGRES_DB:-oracle}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-oracle}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  api:
+    build:
+      context: .
+      dockerfile: api/Dockerfile
+    ports:
+      - "${PORT:-3000}:3000"
+    environment:
+      PORT: 3000
+      DATABASE_URL: postgresql://${POSTGRES_USER:-oracle}:${POSTGRES_PASSWORD:-oracle}@postgres:5432/${POSTGRES_DB:-oracle}
+      API_KEY: ${API_KEY:-}
+      SOROBAN_RPC_URL: ${SOROBAN_RPC_URL:-https://soroban-testnet.stellar.org}
+      CONTRACT_ID: ${CONTRACT_ID:-}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      WS_BROADCAST_INTERVAL: ${WS_BROADCAST_INTERVAL:-5000}
+      RATE_LIMIT_WINDOW_MS: ${RATE_LIMIT_WINDOW_MS:-60000}
+      RATE_LIMIT_MAX: ${RATE_LIMIT_MAX:-120}
+      STALE_THRESHOLD_MS: ${STALE_THRESHOLD_MS:-300000}
+      CORS_ORIGIN: ${CORS_ORIGIN:-*}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  aggregator:
+    build:
+      context: .
+      dockerfile: aggregator/Dockerfile
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-oracle}:${POSTGRES_PASSWORD:-oracle}@postgres:5432/${POSTGRES_DB:-oracle}
+      SOROBAN_RPC_URL: ${SOROBAN_RPC_URL:-https://soroban-testnet.stellar.org}
+      CONTRACT_ID: ${CONTRACT_ID:-}
+      AGGREGATOR_SECRET_KEY: ${AGGREGATOR_SECRET_KEY:-}
+      POLL_INTERVAL: ${POLL_INTERVAL:-60000}
+      ASSET_PAIRS: ${ASSET_PAIRS:-XLM/USD,BTC/USD,ETH/USD,USDC/USD,SOL/USD}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      REFLECTOR_API_URL: ${REFLECTOR_API_URL:-https://data.reflector.network/api/v1}
+      SOURCE_MAX_RETRIES: ${SOURCE_MAX_RETRIES:-3}
+      SOURCE_RETRY_DELAY_MS: ${SOURCE_RETRY_DELAY_MS:-1000}
+      STALE_THRESHOLD_MS: ${STALE_THRESHOLD_MS:-300000}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  pgdata:
