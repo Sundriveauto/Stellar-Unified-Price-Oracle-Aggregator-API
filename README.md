@@ -1,4 +1,4 @@
-# Stellar Price Oracle — Backend
+# Stellar-Unified-Price-Oracle-Aggregator-API
 
 Off-chain aggregator service and REST + WebSocket API for the Stellar Price Oracle system.
 
