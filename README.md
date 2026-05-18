@@ -136,6 +136,8 @@ Receive:
 
 ## Smart Contract
 
+**Testnet deployment:** [`CBITG4MFP6BVQ5E7NIPASLWXUCHKF2XQCTOT52XLM4GI5C5IYUMFCVAR`](https://lab.stellar.org/r/testnet/contract/CBITG4MFP6BVQ5E7NIPASLWXUCHKF2XQCTOT52XLM4GI5C5IYUMFCVAR)
+
 See [contract/README.md](contract/README.md) for build, deploy, and interface docs.
 
 ```bash
